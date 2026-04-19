@@ -1,57 +1,22 @@
-# ????SDK???? - ??????Demo
+from http import client
 import os
 from dotenv import load_dotenv
-from lark_oapi import Client, EventDispatcher, HttpServer
-from lark_oapi.adapter.flask import FlaskAdapter
+import lark_oapi as lark
 
-# ????????????????
-load_dotenv(dotenv_path="/home/j/Documents/pi-ai-bot/feishu_bot.env")
+print("Loading environment variables from .env file...")
+load_dotenv("/home/j/Documents/pi-ai-bot/feishu_bot.env")
+APP_ID=os.getenv("FEISHU_APP_ID")
+print(f"APP_ID: {APP_ID}")
+APP_SECRET=os.getenv("FEISHU_APP_SECRET")
+print(f"APP_SECRET: {APP_SECRET}")
+VERIFICATION_TOKEN=os.getenv("FEISHU_BOT_VERIFICATION_TOKEN")
+print(f"VERIFICATION_TOKEN: {VERIFICATION_TOKEN}")
+OLLAMA_API_URL=os.getenv("OLLAMA_API_URL")
+print(f"OLLAMA_API_URL: {OLLAMA_API_URL}")
+OLLAMA_MODEL=os.getenv("OLLAMA_MODEL")
+print(f"OLLAMA_MODEL: {OLLAMA_MODEL}")
+print("Environment variables loaded successfully.")
 
-# ???????
-APP_ID = os.getenv("FEISHU_APP_ID")
-APP_SECRET = os.getenv("FEISHU_APP_SECRET")
-VERIFY_TOKEN = os.getenv("FEISHU_BOT_VERIFICATION_TOKEN")
-ENCRYPT_KEY = os.getenv("FEISHU_ENCRYPT_KEY", "")  # ?????????
+client = lark.Client(app_id=APP_ID, app_secret=APP_SECRET).build()
 
-# ======================
-# ?????????
-# ======================
-client = Client.builder()\
-    .app_id(APP_ID)\
-    .app_secret(APP_SECRET)\
-    .build()
-
-# ????????????
-dispatcher = EventDispatcher.builder()\
-    .app_id(APP_ID)\
-    .app_secret(APP_SECRET)\
-    .verification_token(VERIFY_TOKEN)\
-    .encrypt_key(ENCRYPT_KEY)\
-    .build()
-
-# ======================
-# ??????????
-# ======================
-def handle_message(ctx, event):
-    """
-    ??????
-    ??????? ? ????????
-    """
-    print("=" * 50)
-    print("? ?????????")
-    print("?????", event.json())
-    print("=" * 50)
-    return None
-
-# ?????????????????
-dispatcher.register_p2p_chat_message_handler(handle_message)
-
-# ======================
-# ??????????
-# ======================
-app = FlaskAdapter(dispatcher)
-
-if __name__ == "__main__":
-    print("? ???????????SDK??")
-    print("? ?????...")
-    app.run(host="0.0.0.0", port=5000, debug=False)
+# come on https://open.feishu.cn/document/server-side-sdk/python--sdk/handle-events
